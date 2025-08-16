@@ -1,177 +1,264 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tính tiền bán hàng</title>
-<style>
-    body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        background: #f5f7fa;
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Làm người yêu anh nhé? 💘</title>
+  <meta name="description" content="Trang web tỏ tình dễ thương: nút 'Không' né chuột, nút 'Có' mở lời yêu." />
+  <style>
+    :root{
+      --bg1:#ffdee9;
+      --bg2:#b5fffc;
+      --text:#2d1b2d;
+      --yes:#16a34a;
+      --no:#ef4444;
+      --card:#ffffffcc;
     }
-    header {
-        background: #4CAF50;
-        color: white;
-        text-align: center;
-        padding: 15px 0;
-        font-size: 22px;
-        font-weight: bold;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color:var(--text);
+      background: radial-gradient(1200px 700px at 20% 10%, #ffd1dc 0%, transparent 60%),
+                  radial-gradient(900px 600px at 80% 30%, #d1ffd8 0%, transparent 60%),
+                  linear-gradient(135deg,var(--bg1),var(--bg2));
+      overflow:hidden;
     }
-    .container {
-        max-width: 900px;
-        margin: auto;
-        padding: 20px;
+    /* Trái tim nền */
+    .float-heart{
+      position:fixed; left:0; top:0; width:100%; height:100%;
+      pointer-events:none; overflow:hidden; z-index:0;
     }
-    .input-group {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        margin-bottom: 15px;
-        background: white;
-        padding: 15px;
-        border-radius: 8px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    .float-heart span{
+      position:absolute; font-size:18px; opacity:.7; animation: rise 8s linear infinite;
+      filter: drop-shadow(0 2px 2px #00000022);
     }
-    .input-group label {
-        flex: 1 1 200px;
-        display: flex;
-        flex-direction: column;
-        font-weight: bold;
+    @keyframes rise{
+      0%{transform: translateY(110vh) translateX(0) rotate(0); opacity:0}
+      10%{opacity:.8}
+      100%{transform: translateY(-10vh) translateX(var(--dx)) rotate(360deg); opacity:0}
     }
-    .input-group input {
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 6px;
-        font-size: 16px;
-        margin-top: 5px;
+
+    /* Khung câu hỏi */
+    .wrap{
+      position:relative; width:100%; height:100%;
+      display:grid; place-items:center; padding:20px;
     }
-    button {
-        background: #4CAF50;
-        color: white;
-        border: none;
-        padding: 12px 20px;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 16px;
-        transition: 0.2s;
-        width: 100%;
+    .card{
+      position:relative; z-index:2;
+      width:min(560px, 92vw);
+      background:var(--card);
+      backdrop-filter: blur(6px);
+      border-radius:20px; padding:28px 22px 26px;
+      box-shadow: 0 10px 30px #0000001a, inset 0 0 0 1px #ffffff66;
+      text-align:center;
     }
-    button:hover {
-        background: #45a049;
+    h1{
+      margin:0 0 12px; font-size:clamp(24px, 4.8vw, 36px);
+      line-height:1.15;
     }
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        background: white;
-        margin-top: 20px;
-        border-radius: 8px;
-        overflow: hidden;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        font-size: 16px;
+    p.lead{
+      margin:0 0 22px; font-size:clamp(14px, 3.8vw, 18px); opacity:.9;
     }
-    th, td {
-        padding: 10px;
-        text-align: center;
-        border-bottom: 1px solid #eee;
+    .btns{
+      position:relative; height:140px; /* chừa không gian cho nút 'Không' chạy */
     }
-    th {
-        background: #f0f0f0;
+    button{
+      font: inherit; font-weight:700;
+      border:none; border-radius:999px; padding:14px 22px;
+      cursor:pointer; transition:.15s transform ease, .2s box-shadow ease, .2s background ease;
+      box-shadow:0 8px 20px #00000018;
+      user-select:none; -webkit-tap-highlight-color: transparent;
     }
-    .total {
-        font-size: 20px;
-        font-weight: bold;
-        text-align: right;
-        margin-top: 15px;
-        background: white;
-        padding: 10px;
-        border-radius: 8px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    button:active{ transform: scale(.98) }
+    #yesBtn{
+      background:var(--yes); color:white; margin:0 10px; min-width:110px;
     }
-    /* Responsive cho mobile */
-    @media (max-width: 600px) {
-        .input-group {
-            flex-direction: column;
-        }
-        .input-group label {
-            flex: 1 1 100%;
-        }
-        button {
-            font-size: 18px;
-        }
-        table {
-            font-size: 14px;
-        }
-        th, td {
-            padding: 8px;
-        }
+    #noBtn{
+      background:var(--no); color:white; min-width:110px;
+      position:absolute; /* để né chuột */
+      left:50%; top:50%; transform:translate(-50%, -50%);
     }
-</style>
+
+    /* Modal lời yêu */
+    .modal{
+      position:fixed; inset:0; display:none; place-items:center; z-index:5;
+      background: #00000055; backdrop-filter: blur(4px);
+      padding:20px;
+    }
+    .modal.show{ display:grid; }
+    .modal-card{
+      width:min(520px, 92vw);
+      background:#fff; border-radius:18px; padding:28px 22px;
+      text-align:center; box-shadow:0 10px 30px #00000033;
+      position:relative;
+    }
+    .modal-card h2{ margin:0 0 6px }
+    .modal-card p{ margin:8px 0 18px }
+    .close{
+      position:absolute; right:10px; top:10px;
+      background:#f3f4f6; border-radius:10px; padding:6px 10px; font-weight:700;
+    }
+
+    /* Canvas pháo giấy */
+    canvas#confetti{ position:fixed; inset:0; pointer-events:none; z-index:6; }
+
+    /* Gợi ý copy link */
+    .foot{
+      margin-top:14px; font-size:13px; opacity:.75;
+    }
+  </style>
 </head>
 <body>
+  <canvas id="confetti"></canvas>
+  <div class="float-heart" id="floatHeart"></div>
 
-<header>💰 TÍNH TIỀN BÁN HÀNG</header>
-
-<div class="container">
-    <div class="input-group">
-        <label>
-            Tên sản phẩm
-            <input type="text" id="ten" placeholder="Nhập tên sản phẩm...">
-        </label>
-        <label>
-            Giá/kg (VND)
-            <input type="number" id="gia" placeholder="Ví dụ: 30000">
-        </label>
-        <label>
-            Số kg
-            <input type="number" step="0.01" id="kg" placeholder="Ví dụ: 2.5">
-        </label>
-        <button onclick="themSanPham()">➕ Thêm sản phẩm</button>
+  <div class="wrap" id="stage">
+    <div class="card">
+      <h1>Làm vợ em nhé? 💖</h1>
+      <p class="lead">Em hứa em không phản bội với vũ phu chị đâu với yêu thương chăm sóc chị nữa 🤞</p>
+      <div class="btns">
+        <button id="yesBtn" aria-label="Đồng ý">Có 😘</button>
+        <button id="noBtn" aria-label="Từ chối">Không 🙈</button>
+      </div>
     </div>
+  </div>
 
-    <table id="hoaDon">
-        <tr>
-            <th>Sản phẩm</th>
-            <th>Giá/kg (VND)</th>
-            <th>Số kg</th>
-            <th>Thành tiền (VND)</th>
-        </tr>
-    </table>
+  <!-- Modal -->
+  <div class="modal" id="modal">
+    <div class="modal-card">
+      <button class="close" id="closeModal" aria-label="Đóng">✕</button>
+      <h2>Yeyyy! Chị đồng ý rồi! 🥳</h2>
+      <p>Cảm ơn chị đã tin tưởng chọn em nhaaaaa yêu chị nhất lunnnn♥️<br/>Cảm ơn chị đã bấm “Có” 💞</p>
+      <button id="okBtn">Oki lunn♥️</button>
+    </div>
+  </div>
 
-    <div class="total" id="tongTien">Tổng cộng: 0 VND</div>
-</div>
+  <script>
+    // ========== HEART BACKGROUND ==========
+    (function hearts(){
+      const wrap = document.getElementById('floatHeart');
+      const num = 24;
+      const emojis = ['💗','💖','💘','💝','💓','❤️'];
+      for (let i=0;i<num;i++){
+        const s = document.createElement('span');
+        s.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+        s.style.left = Math.random()*100 + 'vw';
+        s.style.setProperty('--dx', (Math.random()*80 - 40) + 'vw');
+        s.style.animationDelay = (-Math.random()*8) + 's';
+        s.style.fontSize = (16 + Math.random()*22) + 'px';
+        wrap.appendChild(s);
+      }
+    })();
 
-<script>
-    let tongTien = 0;
-    function themSanPham() {
-        const ten = document.getElementById("ten").value.trim();
-        const gia = parseFloat(document.getElementById("gia").value);
-        const kg = parseFloat(document.getElementById("kg").value);
+    // ========== BUTTON LOGIC ==========
+    const stage = document.getElementById('stage');
+    const yesBtn = document.getElementById('yesBtn');
+    const noBtn  = document.getElementById('noBtn');
+    const modal  = document.getElementById('modal');
+    const closeModal = document.getElementById('closeModal');
+    const okBtn = document.getElementById('okBtn');
 
-        if (!ten || isNaN(gia) || isNaN(kg)) {
-            alert("Vui lòng nhập đầy đủ thông tin!");
-            return;
+    // Di chuyển "Không" tới vị trí ngẫu nhiên trong vùng .btns
+    function moveNoButton(ev){
+      const container = noBtn.parentElement.getBoundingClientRect();
+      const btn = noBtn.getBoundingClientRect();
+      const pad = 6;
+
+      // tạo vị trí mới ngẫu nhiên nhưng vẫn trong khung
+      let nx = Math.random() * (container.width - btn.width - pad*2) + pad;
+      let ny = Math.random() * (container.height - btn.height - pad*2) + pad;
+
+      // nếu có tọa độ con trỏ, đẩy nút ra xa con trỏ một chút
+      if (ev && ev.clientX !== undefined){
+        const mx = ev.clientX - container.left;
+        const my = ev.clientY - container.top;
+        const dx = nx - mx, dy = ny - my;
+        const dist = Math.hypot(dx,dy) || 1;
+        if (dist < 120){
+          nx = Math.min(Math.max(mx + dx/dist*160, pad), container.width - btn.width - pad);
+          ny = Math.min(Math.max(my + dy/dist*160, pad), container.height - btn.height - pad);
         }
+      }
 
-        const thanhTien = gia * kg;
-        tongTien += thanhTien;
-
-        const table = document.getElementById("hoaDon");
-        const row = table.insertRow(-1);
-        row.insertCell(0).innerText = ten;
-        row.insertCell(1).innerText = gia.toLocaleString();
-        row.insertCell(2).innerText = kg;
-        row.insertCell(3).innerText = thanhTien.toLocaleString();
-
-        document.getElementById("tongTien").innerText = "Tổng cộng: " + tongTien.toLocaleString() + " VND";
-
-        document.getElementById("ten").value = "";
-        document.getElementById("gia").value = "";
-        document.getElementById("kg").value = "";
+      noBtn.style.left = nx + 'px';
+      noBtn.style.top  = ny + 'px';
+      noBtn.style.transform = 'translate(0,0)'; // bỏ transform trung tâm ban đầu
     }
-</script>
 
+    // Né chuột (desktop)
+    noBtn.addEventListener('pointerenter', moveNoButton);
+    stage.addEventListener('pointermove', (e)=>{
+      // nếu con trỏ ở gần nút "Không" thì né thêm
+      const btn = noBtn.getBoundingClientRect();
+      const near = 100;
+      if (e.clientX > btn.left-near && e.clientX < btn.right+near &&
+          e.clientY > btn.top-near  && e.clientY < btn.bottom+near){
+        moveNoButton(e);
+      }
+    });
+    // Né khi chạm (mobile)
+    noBtn.addEventListener('touchstart', (e)=>{ e.preventDefault(); moveNoButton(); }, {passive:false});
+    // Ngăn click được vào "Không"
+    noBtn.addEventListener('click', (e)=>{ e.preventDefault(); moveNoButton(e); });
+
+    // Bấm "Có" -> mở modal + pháo giấy
+    yesBtn.addEventListener('click', ()=>{
+      modal.classList.add('show');
+      burstConfetti();
+    });
+    [closeModal, okBtn].forEach(el=>el.addEventListener('click', ()=> modal.classList.remove('show')));
+
+    // ========== CONFETTI (tự viết, không dùng thư viện) ==========
+    (function setupConfetti(){
+      const canvas = document.getElementById('confetti');
+      const ctx = canvas.getContext('2d');
+      let W = canvas.width = innerWidth;
+      let H = canvas.height = innerHeight;
+      const pieces = [];
+      const COLORS = ['#f87171','#fb7185','#fbbf24','#34d399','#60a5fa','#a78bfa','#f472b6','#f59e0b'];
+
+      function rand(n){ return Math.random()*n }
+      function Piece(){
+        this.x = rand(W);
+        this.y = -10;
+        this.w = 6 + rand(6);
+        this.h = 8 + rand(10);
+        this.vx = -2 + rand(4);
+        this.vy = 2 + rand(3);
+        this.rot = rand(Math.PI*2);
+        this.vr = -0.2 + rand(0.4);
+        this.color = COLORS[(Math.random()*COLORS.length)|0];
+        this.life = 0; this.max = 180 + (rand(120));
+      }
+      function resize(){ W = canvas.width = innerWidth; H = canvas.height = innerHeight; }
+      window.addEventListener('resize', resize);
+
+      function update(){
+        ctx.clearRect(0,0,W,H);
+        for (let i=pieces.length-1; i>=0; i--){
+          const p = pieces[i];
+          p.x += p.vx; p.y += p.vy; p.rot += p.vr; p.vy += 0.03; p.life++;
+          if (p.x<-20||p.x>W+20||p.y>H+20||p.life>p.max){ pieces.splice(i,1); continue; }
+          ctx.save();
+          ctx.translate(p.x,p.y);
+          ctx.rotate(p.rot);
+          ctx.fillStyle = p.color;
+          ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);
+          ctx.restore();
+        }
+        requestAnimationFrame(update);
+      }
+      update();
+
+      window.burstConfetti = function burstConfetti(){
+        for (let i=0;i<180;i++) pieces.push(new Piece());
+      };
+    })();
+
+    // Đặt vị trí ban đầu của nút "Không"
+    window.addEventListener('load', ()=> moveNoButton());
+  </script>
 </body>
 </html>
-
